@@ -1,0 +1,32 @@
+html {
+    min-width: 100%;
+    font-family: helvetica;
+}
+
+article {
+    width: 60vw;
+    margin: auto;
+    font-size: 21px;
+}
+
+#selection-ui {
+    position: absolute;
+    border-radius: 0px 0px 5px 5px;
+    border: solid 1px black;
+    background-color: white;
+    padding: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                          supported by Chrome, Edge, Opera and Firefox */
+}

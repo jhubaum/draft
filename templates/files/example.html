@@ -1,88 +1,21 @@
-<!doctype HTML>
+{% extends "file.html" %}
 
-<html>
-    <head>
-      <meta charset="utf-8">
-      <link href="css/style.css"  rel="stylesheet" type="text/css">
-      <style>
-        html {
-            min-width: 100%;
-            font-family: helvetica;
-        }
+{% block title %}Example{% endblock %}
 
-        article {
-            width: 60vw;
-            margin: auto;
-
-            font-size: 21px;
-        }
-
-        #selection-ui {
-            position: absolute;
-            border-radius: 0px 0px 5px 5px;
-            border: solid 1px black;
-            background-color: white;
-            padding: 5px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .noselect {
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Old versions of Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-        }
-      </style>
-      <title>Feedback</title>
-    </head>
-    <body>
-      <article id="main">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam magna ipsum, maximus ut tellus sed, vulputate ultricies felis. Sed et egestas risus. Ut vitae tellus eget lectus gravida lobortis. Aliquam imperdiet quam eget dolor maximus, et vehicula augue varius. Etiam eros felis, efficitur dictum nisi nec, bibendum commodo ligula. Nam vel neque quis turpis consequat fermentum. Cras faucibus leo ut dignissim interdum. Praesent commodo diam ac ex vestibulum tempus. Quisque non mauris odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum vitae fringilla tellus, in hendrerit felis. Proin vitae mauris sem. Sed vel scelerisque massa. Vestibulum quis tellus metus. Donec varius laoreet tellus. Aliquam ultrices nisl at malesuada consectetur.
-        </p>
-        <p>
-          Nullam eget est lacus. Donec ullamcorper lacus non quam facilisis, vel dictum nulla varius. Morbi sagittis dignissim nunc in vulputate. Mauris vitae ipsum sem. Aliquam ut lacus vel ex sollicitudin condimentum. Integer tincidunt auctor mi, ac rhoncus quam sollicitudin vel. Suspendisse tempor dolor magna, non hendrerit ipsum auctor at. Phasellus non ligula in nisi varius rhoncus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-        </p>
-        <p>
-          Aenean nisl risus, pharetra in semper et, finibus sit amet neque. Nunc quis varius sapien. Integer at maximus felis, nec dignissim quam. Proin lacinia, nibh a consectetur luctus, ipsum ex porta risus, sed tempus ex ex id enim. Cras nunc sem, hendrerit non porttitor ut, tincidunt sit amet dolor. Vestibulum porttitor mi vel augue faucibus scelerisque. Nulla varius dolor ante, quis eleifend elit lobortis vitae. Donec at risus vulputate, tristique purus quis, ultricies nisi. Nam eget lorem non magna molestie ultrices dignissim eu neque. Nam vel velit lacus.
-        </p>
-        <p>
-          Donec nec risus quis libero faucibus malesuada ut ut libero. Nullam tortor quam, congue ut bibendum sed, venenatis eu sem. Donec facilisis volutpat placerat. Vivamus pretium euismod congue. Etiam sit amet massa metus. Nunc tristique velit tellus, vel varius metus varius facilisis. Praesent ut orci ex. Cras eget egestas orci, id tincidunt nisi. Sed cursus scelerisque diam, ac sagittis turpis dictum in. Suspendisse at accumsan ex.
-        </p>
-        <p>
-          Etiam nec odio urna. Suspendisse eget leo fermentum, auctor ante eget, elementum augue. In elementum tincidunt elit, eget iaculis sapien dictum eu. Vestibulum vulputate, sem maximus tincidunt faucibus, magna ligula rhoncus nibh, eu volutpat nisi justo a elit. Praesent semper fringilla tincidunt. Nam quis mauris quis augue consectetur lacinia in sed nunc. Pellentesque bibendum, arcu nec vehicula aliquet, turpis dui euismod enim, sit amet porttitor velit augue id neque. Aliquam sed molestie tellus. Phasellus quis egestas enim. Phasellus eleifend lorem ut orci facilisis tincidunt eu at orci. Morbi tincidunt ante non accumsan molestie. Nullam imperdiet dolor eu ligula condimentum, ac mattis nibh interdum. In nec nulla commodo ipsum pretium sollicitudin. Etiam quis enim eget metus consequat tincidunt. Sed ornare mauris non mollis varius.
-        </p>
-      </article>
-      <div id="selection-ui" class="hidden noselect">
-        This is the UI bar
-      </div>
-      <script>
-        const LINE_HEIGHT = parseInt(getComputedStyle(document.querySelector("#main"))['line-height'].replace('px', ''))
-
-        let ui = document.querySelector("#selection-ui");
-
-        document.addEventListener('mouseup', e => {
-            let sel = document.getSelection();
-
-            if(sel.isCollapsed) {
-                ui.classList.add('hidden');
-                return;
-            }
-            ui.classList.remove('hidden');
-
-            let r = sel.getRangeAt(sel.rangeCount-1);
-            r = r.getClientRects();
-            r = r[r.length-1];
-
-            ui.style.left = `${r.x+window.pageXOffset}px`;
-            ui.style.top = `${r.y+window.pageYOffset+LINE_HEIGHT}px`;
-        });
-      </script>
-    </body>
-</html>
+{% block content %}
+<p>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam magna ipsum, maximus ut tellus sed, vulputate ultricies felis. Sed et egestas risus. Ut vitae tellus eget lectus gravida lobortis. Aliquam imperdiet quam eget dolor maximus, et vehicula augue varius. Etiam eros felis, efficitur dictum nisi nec, bibendum commodo ligula. Nam vel neque quis turpis consequat fermentum. Cras faucibus leo ut dignissim interdum. Praesent commodo diam ac ex vestibulum tempus. Quisque non mauris odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum vitae fringilla tellus, in hendrerit felis. Proin vitae mauris sem. Sed vel scelerisque massa. Vestibulum quis tellus metus. Donec varius laoreet tellus. Aliquam ultrices nisl at malesuada consectetur.
+</p>
+<p>
+  Nullam eget est lacus. Donec ullamcorper lacus non quam facilisis, vel dictum nulla varius. Morbi sagittis dignissim nunc in vulputate. Mauris vitae ipsum sem. Aliquam ut lacus vel ex sollicitudin condimentum. Integer tincidunt auctor mi, ac rhoncus quam sollicitudin vel. Suspendisse tempor dolor magna, non hendrerit ipsum auctor at. Phasellus non ligula in nisi varius rhoncus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+</p>
+<p>
+  Aenean nisl risus, pharetra in semper et, finibus sit amet neque. Nunc quis varius sapien. Integer at maximus felis, nec dignissim quam. Proin lacinia, nibh a consectetur luctus, ipsum ex porta risus, sed tempus ex ex id enim. Cras nunc sem, hendrerit non porttitor ut, tincidunt sit amet dolor. Vestibulum porttitor mi vel augue faucibus scelerisque. Nulla varius dolor ante, quis eleifend elit lobortis vitae. Donec at risus vulputate, tristique purus quis, ultricies nisi. Nam eget lorem non magna molestie ultrices dignissim eu neque. Nam vel velit lacus.
+</p>
+<p>
+  Donec nec risus quis libero faucibus malesuada ut ut libero. Nullam tortor quam, congue ut bibendum sed, venenatis eu sem. Donec facilisis volutpat placerat. Vivamus pretium euismod congue. Etiam sit amet massa metus. Nunc tristique velit tellus, vel varius metus varius facilisis. Praesent ut orci ex. Cras eget egestas orci, id tincidunt nisi. Sed cursus scelerisque diam, ac sagittis turpis dictum in. Suspendisse at accumsan ex.
+</p>
+<p>
+  Etiam nec odio urna. Suspendisse eget leo fermentum, auctor ante eget, elementum augue. In elementum tincidunt elit, eget iaculis sapien dictum eu. Vestibulum vulputate, sem maximus tincidunt faucibus, magna ligula rhoncus nibh, eu volutpat nisi justo a elit. Praesent semper fringilla tincidunt. Nam quis mauris quis augue consectetur lacinia in sed nunc. Pellentesque bibendum, arcu nec vehicula aliquet, turpis dui euismod enim, sit amet porttitor velit augue id neque. Aliquam sed molestie tellus. Phasellus quis egestas enim. Phasellus eleifend lorem ut orci facilisis tincidunt eu at orci. Morbi tincidunt ante non accumsan molestie. Nullam imperdiet dolor eu ligula condimentum, ac mattis nibh interdum. In nec nulla commodo ipsum pretium sollicitudin. Etiam quis enim eget metus consequat tincidunt. Sed ornare mauris non mollis varius.
+</p>
+{% endblock %}
