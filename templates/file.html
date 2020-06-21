@@ -12,8 +12,11 @@
       {% block content %}
       {% endblock %}
     </article>
-    <div id="selection-ui" class="hidden noselect">
+    <div id="selection-ui" class="hidden noselect context-ui">
       <button onclick="createHighlight('cut');">Highlight</button>
+    </div>
+    <div id="highlight-ui" class="hidden noselect context-ui">
+      Highlight UI
     </div>
     <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
   </body>

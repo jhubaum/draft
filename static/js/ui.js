@@ -33,30 +33,24 @@ function createHighlight(type) {
         console.log(start.nodeType, end.nodeType);
 
         if (start == end) {
-            let s = document.createElement('span');
-            s.classList.add('highlight', 'noselect');
-            s.innerText = start.data.substr(r.startOffset, r.endOffset-r.startOffset);
+            let s = createHighlightSpan(
+                start.data.substr(r.startOffset,
+                                  r.endOffset-r.startOffset));
 
             end = start.data.substr(r.endOffset, start.data.length);
             start.data = start.data.substr(0, r.startOffset);
             start.parentNode.insertBefore(s, start.nextSibling);
             s.insertAdjacentText('afterend', end);
 
-            s.addEventListener('click', e => console.log("Clicked", e));
-
-
         } else {
-            let s = document.createElement('span');
-            s.classList.add('highlight', 'noselect');
-            s.innerText = start.data.substr(r.startOffset, start.data.length);
+            let s = createHighlightSpan(
+                start.data.substr(r.startOffset, start.data.length));
 
             start.data = start.data.substr(0, r.startOffset);
             start.parentNode.insertBefore(s, start.nextSibling);
 
             if (end.nodeType == 3) {
-                s = document.createElement('span');
-                s.classList.add('highlight', 'noselect');
-                s.innerText = end.data.substr(0, r.endOffset);
+                s = createHighlightSpan(end.data.substr(0, r.endOffset));
 
                 end.data = end.data.substr(r.endOffset, end.data.length);
                 end.parentNode.insertBefore(s, end);
@@ -67,4 +61,18 @@ function createHighlight(type) {
     }
 
     sel.empty();
+}
+
+function createHighlightSpan(text) {
+    let s = document.createElement('span');
+    s.classList.add('highlight', 'noselect');
+    s.innerText = text;
+    s.addEventListener('click', e => {
+        console.log(e);
+        let hui = document.querySelector('#highlight-ui');
+        hui.classList.remove('hidden');
+        hui.style.left = `${e.target.offsetLeft}px`;
+        hui.style.top = `${e.target.offsetTop+LINE_HEIGHT}px`;
+    });
+    return s;
 }

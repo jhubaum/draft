@@ -9,7 +9,7 @@ article {
     font-size: 21px;
 }
 
-#selection-ui {
+.context-ui {
     position: absolute;
     border-radius: 0px 0px 5px 5px;
     border: solid 1px black;
@@ -23,6 +23,10 @@ article {
 
 .highlight {
     background-color: orange;
+}
+
+.highlight:hover {
+    background-color: darkorange;
 }
 
 .noselect {
