@@ -17,16 +17,24 @@ article {
     padding: 5px;
 }
 
-.hidden {
-    display: none;
-}
-
 .highlight {
     background-color: orange;
 }
 
 .highlight:hover {
     background-color: darkorange;
+}
+
+#highlight-ui {
+    position: fixed;
+    width: 70vw;
+    height: 50vh;
+    background-color: #ffffffdd;
+    border: 1px solid  black;
+    border-radius: 5px;
+    left: 15vw;
+    top: 25vh;
+    padding: 10px;
 }
 
 .noselect {

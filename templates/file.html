@@ -8,16 +8,17 @@
 
   </head>
   <body>
+    <context-ui id="selection-ui">
+      <button onclick="createHighlight('cut');">Highlight</button>
+    </context-ui>
+    <div id="highlight-ui" hidden>
+      <button>Delete Highlight</button>
+      <button onclick="this.parentNode.hidden=true;">Hide Overlay</button>
+    </div>
     <article id="main">
       {% block content %}
       {% endblock %}
     </article>
-    <div id="selection-ui" class="hidden noselect context-ui">
-      <button onclick="createHighlight('cut');">Highlight</button>
-    </div>
-    <div id="highlight-ui" class="hidden noselect context-ui">
-      Highlight UI
-    </div>
     <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
   </body>
 </html>
