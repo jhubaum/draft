@@ -1,7 +1,7 @@
 const LINE_HEIGHT = parseInt(getComputedStyle(document.querySelector("#main"))['line-height'].replace('px', ''))
 
 class Highlight {
-    constructor(text, start, length) {
+    constructor(text, start, length, id=null) {
         this.span = document.createElement('span');
         this.span.classList.add('highlight', 'noselect');
         this.span.innerText = text.data.substr(start, length);
@@ -15,19 +15,22 @@ class Highlight {
         text.parentNode.insertBefore(this.span, text.nextSibling);
         this.span.insertAdjacentText('afterend', end);
 
-        // send it to db
-        fetch('/1/highlight/add', {
-            method: "POST",
-             headers: {
-                 'Accept': 'application/json',
-                 'Content-Type': 'application/json'
-             },
-            body: JSON.stringify({
-                p: text.parentNode.getAttribute('id'),
-                start: start,
-                length: length,
-            })
-        });
+        if (id == null) {
+            // send it to db
+            fetch('/1/highlight/add', {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    p: text.parentNode.getAttribute('id'),
+                    start: start,
+                    length: length,
+                })
+            }).then(response => this.id = response.json().id)
+        } else
+            this.id = id;
     }
 
     show_ui() {
@@ -44,7 +47,23 @@ class Highlight {
     }
 
     remove_highlight() {
-        if(this.span.previousSibling != null &&
+        if (this.id == null) {
+            alert('Sync Error with Server')
+            return;
+        }
+
+        fetch('/1/highlight/delete', {
+            method: "POST",
+             headers: {
+                 'Accept': 'application/json',
+                 'Content-Type': 'application/json'
+             },
+            body: JSON.stringify({
+                id: this.id
+            })
+        })
+
+        if (this.span.previousSibling != null &&
            this.span.previousSibling.nodeType === 3)
                 this.span.previousSibling.data += this.span.innerText;
         else
@@ -86,15 +105,14 @@ class Highlight {
         JSON.parse(json).forEach(h => {
             let nodes = document.querySelector(`#${h.p}`).childNodes;
             let start = h.start;
-            let length = h.length;
 
             for (let i=0; i<nodes.length; ++i) {
                 if (nodes[i].nodeType == 1)
                     start -= nodes[i].innerText.length;
-                else if (nodes[i].data.length < start+length)
+                else if (nodes[i].data.length < start+h.length)
                     start -= nodes[i].data.length
                 else {
-                    new Highlight(nodes[i], start, length);
+                    new Highlight(nodes[i], start, h.length, h.id);
                     break;
                 }
             }

@@ -11,7 +11,8 @@ class Draft(Base):
     title = Column(String, nullable=False)
     filename = Column(String, nullable=False)
 
-    highlights = relationship("Highlight", back_populates="draft")
+    highlights = relationship("Highlight", back_populates="draft",
+                              cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return f'<Draft({self.title})>'
@@ -36,6 +37,7 @@ class Highlight(Base):
 
     def to_dict(self):
         return dict(
+            id=self.id,
             p=self.paragraph,
             start=self.start,
             length=self.length
