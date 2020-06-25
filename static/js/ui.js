@@ -1,14 +1,33 @@
 const LINE_HEIGHT = parseInt(getComputedStyle(document.querySelector("#main"))['line-height'].replace('px', ''))
 
 class Highlight {
-    constructor(spans) {
-        this.spans = spans;
+    constructor(text, start, length) {
+        this.span = document.createElement('span');
+        this.span.classList.add('highlight', 'noselect');
+        this.span.innerText = text.data.substr(start, length);
 
-        this.spans.forEach(s => {
-            s.addEventListener('click', e => {
-                this.show_ui();
-            })
+        this.span.addEventListener('click', e => {
+            this.show_ui();
         })
+
+        let end = text.data.substr(start+length, text.data.length);
+        text.data = text.data.substr(0, start);
+        text.parentNode.insertBefore(this.span, text.nextSibling);
+        this.span.insertAdjacentText('afterend', end);
+
+        // send it to db
+        fetch('/1/highlight/add', {
+            method: "POST",
+             headers: {
+                 'Accept': 'application/json',
+                 'Content-Type': 'application/json'
+             },
+            body: JSON.stringify({
+                p: text.parentNode.getAttribute('id'),
+                start: start,
+                length: length,
+            })
+        });
     }
 
     show_ui() {
@@ -25,31 +44,23 @@ class Highlight {
     }
 
     remove_highlight() {
-        this.spans.forEach(s => {
-            if(s.previousSibling != null && s.previousSibling.nodeType === 3)
-                s.previousSibling.data += s.innerText;
-            else
-                s.insertAdjacentText('beforebegin', s.innerText);
+        if(this.span.previousSibling != null &&
+           this.span.previousSibling.nodeType === 3)
+                this.span.previousSibling.data += this.span.innerText;
+        else
+            this.span.insertAdjacentText('beforebegin', this.span.innerText);
 
-            if (s.nextSibling != null && s.nextSibling.nodeType === 3) {
-                s.previousSibling.data += s.nextSibling.data;
-                s.parentNode.removeChild(s.nextSibling);
-            }
+        if (this.span.nextSibling != null &&
+            this.span.nextSibling.nodeType === 3) {
+            this.span.previousSibling.data += this.span.nextSibling.data;
+            this.span.parentNode.removeChild(this.span.nextSibling);
+        }
 
-            s.parentNode.removeChild(s);
-        })
-    }
-
-    static _createSpan(t, index, length) {
-        let span = document.createElement('span');
-        span.classList.add('highlight', 'noselect');
-        span.innerText = t.data.substr(index, length);
-
-        return span;
+        this.span.parentNode.removeChild(this.span);
     }
 
     static fromSelection(sel) {
-        let spans = [];
+        let highlights = [];
 
         for (let i=0; i<sel.rangeCount; ++i) {
             let r = sel.getRangeAt(i);
@@ -59,36 +70,23 @@ class Highlight {
             if (start.nodeType === 1)
                 start = start.childNodes[0];
 
-            if (start == end) {
-                let s = Highlight._createSpan(start,
-                                              r.startOffset,
-                                              r.endOffset-r.startOffset);
+            if (start == end)
+                highlights.push(new Highlight(start, r.startOffset, r.endOffset-r.startOffset));
+            else {
+                highlights.push(new Highlight(start, r.startOffset, start.data.length));
 
-                end = start.data.substr(r.endOffset, start.data.length);
-                start.data = start.data.substr(0, r.startOffset);
-                start.parentNode.insertBefore(s, start.nextSibling);
-                s.insertAdjacentText('afterend', end);
-                spans.push(s);
-            } else {
-                let s = Highlight._createSpan(start,
-                                              r.startOffset,
-                                              start.data.length);
-
-                start.data = start.data.substr(0, r.startOffset);
-                start.parentNode.insertBefore(s, start.nextSibling);
-                spans.push(s);
-
-                if (end.nodeType == 3) {
-                    s = Highlight._createSpan(end, 0,
-                                              r.endOffset);
-
-                    end.data = end.data.substr(r.endOffset, end.data.length);
-                    end.parentNode.insertBefore(s, end);
-                    spans.push(s);
-                }
+                if (end.nodeType == 3)
+                    highlights.push(new Highlight(end, 0, r.endOffset));
             }
         }
-        return new Highlight(spans);
+        return highlights;
+    }
+
+    static fromJSON(json) {
+        JSON.parse(json).forEach(h => {
+            new Highlight(document.querySelector(`#${h.p}`).childNodes[0],
+                          h.start, h.length);
+        })
     }
 }
 
@@ -132,7 +130,7 @@ function createHighlight(type) {
     if (sel.isCollapsed)
         return;
 
-    let highlight = Highlight.fromSelection(sel);
+    let highlights = Highlight.fromSelection(sel);
 
 
     // add menu

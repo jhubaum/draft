@@ -4,7 +4,7 @@
   <head>
     <meta charset="urf=8">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet", type="text/css">
-    <title>Draft - {% block title %}{% endblock %} </title>
+    <title>Draft - {{ title }} </title>
 
   </head>
   <body>
@@ -20,5 +20,8 @@
       {% endblock %}
     </article>
     <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+    <script>
+      Highlight.fromJSON({{ highlights | tojson }})
+    </script>
   </body>
 </html>
