@@ -73,7 +73,7 @@ class Highlight {
             if (start == end)
                 highlights.push(new Highlight(start, r.startOffset, r.endOffset-r.startOffset));
             else {
-                highlights.push(new Highlight(start, r.startOffset, start.data.length));
+                highlights.push(new Highlight(start, r.startOffset, start.data.length-r.startOffset));
 
                 if (end.nodeType == 3)
                     highlights.push(new Highlight(end, 0, r.endOffset));
@@ -84,8 +84,20 @@ class Highlight {
 
     static fromJSON(json) {
         JSON.parse(json).forEach(h => {
-            new Highlight(document.querySelector(`#${h.p}`).childNodes[0],
-                          h.start, h.length);
+            let nodes = document.querySelector(`#${h.p}`).childNodes;
+            let start = h.start;
+            let length = h.length;
+
+            for (let i=0; i<nodes.length; ++i) {
+                if (nodes[i].nodeType == 1)
+                    start -= nodes[i].innerText.length;
+                else if (nodes[i].data.length < start+length)
+                    start -= nodes[i].data.length
+                else {
+                    new Highlight(nodes[i], start, length);
+                    break;
+                }
+            }
         })
     }
 }
