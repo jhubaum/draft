@@ -1,0 +1,38 @@
+<!doctype HTML>
+
+<html>
+  <head>
+    <meta charset="urf=8">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet", type="text/css">
+    <title>Configure drafts</title>
+
+  </head>
+  <body>
+    {% for d in drafts %}
+    <details id="draft_{{d.id}}">
+      <summary>{{d.title}}</summary>
+      <a href="/{{ d.id }}">Show</a>
+      <button onclick="deleteDraft({{ d.id }});">Delete Draft</button>
+    </details>
+    {% endfor %}
+
+    <form action="{{ url_for('add_draft') }}" method="POST">
+      <label for="title">title</label>
+      <input type="text" id="title" name="title">
+      <label for="content">content</label>
+      <textarea id="content" name="content"></textarea>
+      <input type="submit" value="Add new draft">
+    </form>
+
+    <script>
+      function deleteDraft(id) {
+          let node = document.querySelector(`#draft_${id}`);
+          node.parentNode.removeChild(node);
+
+          fetch(`/config/draft/delete/${id}`, {
+              method: "POST"
+          });
+      }
+    </script>
+  </body>
+</html>

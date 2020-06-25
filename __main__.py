@@ -1,6 +1,6 @@
-import json
+import json, re
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 
 from database import Session
 from database.models import Draft, Highlight
@@ -56,6 +56,41 @@ def remove_highlight(draft_id):
 
     return 'ok'
 
+@app.route('/config')
+def admin_view():
+    session = Session()
+    return render_template('config.html', drafts=session.query(Draft).all())
+
+@app.route('/config/draft/add', methods=['POST'])
+def add_draft():
+    filename = request.form['title'].lower().replace(' ', '_')
+    filename = re.sub('\W+', '', filename) + '.html'
+
+    create_draft(request.form['content'], filename)
+
+    session = Session()
+    session.add(Draft(title=request.form['title'], filename=filename))
+    session.commit()
+   
+    return redirect(url_for('admin_view'))
+
+def create_draft(text, filename):
+    with open(f'templates/files/{filename}', 'w+') as f:
+        f.write('{% extends "file.html" %}')
+        f.write('{% block content %}')
+        f.write('<p id="p0">')
+        f.write(text)
+        f.write('</p>')
+        f.write('{% endblock %}')
+
+
+@app.route('/config/draft/delete/<int:draft_id>', methods=['POST'])
+def delete_draft(draft_id):
+    session = Session()
+    session.delete(session.query(Draft).get(draft_id))
+    session.commit()
+
+    return 'ok'
 
 if __name__ == '__main__':
     setup()

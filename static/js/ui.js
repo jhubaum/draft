@@ -48,7 +48,7 @@ class Highlight {
 
     remove_highlight() {
         if (this.id == null) {
-            alert('Sync Error with Server')
+            alert('Sync Error with Server. Please try to reload the page')
             return;
         }
 
