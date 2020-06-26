@@ -47,4 +47,4 @@ def create_draft_file(text):
 
 
 def delete_draft_file(draft):
-    pass
+    os.remove(os.path.join(FILE_SUBDIR, draft.filename))

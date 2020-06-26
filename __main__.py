@@ -70,7 +70,7 @@ def add_draft():
     session = Session()
     session.add(Draft(title=title, filename=filename))
     session.commit()
-   
+
     return redirect(url_for('admin_view'))
 
 @app.route('/config/draft/delete/<int:draft_id>', methods=['POST'])
