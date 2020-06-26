@@ -14,9 +14,13 @@ class Draft(Base):
     highlights = relationship("Highlight", back_populates="draft",
                               cascade="all, delete, delete-orphan")
 
+    urls = relationship("URL", back_populates="draft",
+                        cascade="all, delete, delete-orphan")
+
     def __repr__(self):
         return f'<Draft({self.title})>'
 
+   
 class Highlight(Base):
     __tablename__ = 'highlights'
 
@@ -42,3 +46,14 @@ class Highlight(Base):
             start=self.start,
             length=self.length
         )
+
+   
+class URL(Base):
+    __tablename__ = 'urls'
+
+    id = Column(Integer, primary_key=True)
+    url = Column(String(8), nullable=False)
+    name = Column(String, nullable=False)
+
+    draft_id = Column(Integer, ForeignKey('drafts.id'))
+    draft = relationship("Draft", back_populates="urls")

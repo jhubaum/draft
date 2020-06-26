@@ -11,14 +11,21 @@
     {% for d in drafts %}
     <details id="draft_{{d.id}}">
       <summary>{{d.title}}</summary>
-      <a href="/{{ d.id }}">Show</a>
       <button onclick="deleteDraft({{ d.id }});">Delete Draft</button>
+      <br>
+      {% for u in d.urls %}
+      <p>
+        <a href="/{{u.url}}">{{u.name}}</a>
+        <button onclick="deleteURL('{{u.url}}', this.parentNode);">X</button>
+      <p>
+      {% endfor %}
+      <br>
+      <p> <input type="text" id="url-name-{{d.id}}">
+        <button onclick="addURL({{d.id}});">Add url</button></p>
     </details>
     {% endfor %}
 
     <form action="{{ url_for('add_draft') }}" method="POST">
-      <label for="title">title</label>
-      <input type="text" id="title" name="title">
       <label for="content">content</label>
       <textarea id="content" name="content"></textarea>
       <input type="submit" value="Add new draft">
@@ -32,6 +39,28 @@
           fetch(`/config/draft/delete/${id}`, {
               method: "POST"
           });
+      }
+
+      function addURL(draftId) {
+          let name = document.querySelector(`#url-name-${draftId}`);
+          fetch('/config/url/add', {
+              method: "POST",
+              headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  name: name.value,
+                  draft_id: draftId
+              })
+          });
+          name.value = "";
+      }
+
+      function deleteURL(url, node) {
+          fetch(`/config/url/delete/${url}`, {
+              method: "POST"
+          }).then(() => node.parentNode.removeChild(node));
       }
     </script>
   </body>

@@ -1,9 +1,11 @@
 import json
+import random
+import string
 
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 
 from database import Session
-from database.models import Draft, Highlight
+from database.models import Draft, Highlight, URL
 
 import parsing
 
@@ -20,14 +22,14 @@ def setup():
 def home():
     return render_template('files/example.html')
 
-@app.route('/<int:draft_id>')
-def show_draft(draft_id):
+@app.route('/<url>')
+def resolve_url(url):
     session = Session()
-    draft = session.query(Draft).get(draft_id)
+    q = session.query(URL).filter(URL.url == url)
+    if q.count() == 0:
+        return "Invalid URL, maybe I've deleted the post already. Thanks for your help anyways"
 
-    if draft is None:
-        return "Not found"
-   
+    draft = q.first().draft
     highlights = list(map(lambda x: x.to_dict(), draft.highlights))
 
     return render_template(f'files/{draft.filename}',
@@ -82,6 +84,33 @@ def delete_draft(draft_id):
     session.commit()
 
     return 'ok'
+
+@app.route('/config/url/add', methods=['POST'])
+def add_url():
+    def gen(length=8):
+        return ''.join(random.sample(string.ascii_lowercase, length))
+
+    session = Session()
+    url = gen()
+    while session.query(URL).filter(URL.url == url).count() > 1:
+        url = gen()
+
+    url = URL(url=url, name=request.json['name'],
+              draft=session.query(Draft).get(request.json['draft_id']))
+
+    session.add(url)
+    session.commit()
+
+    return 'ok'
+
+@app.route('/config/url/delete/<url>', methods=['POST'])
+def delete_url(url):
+    session = Session()
+    session.query(URL).filter(URL.url == url).delete()
+    session.commit()
+
+    return 'ok'
+
 
 if __name__ == '__main__':
     setup()
