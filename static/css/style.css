@@ -18,11 +18,13 @@ article {
 }
 
 .highlight {
-    background-color: orange;
+    --highlight-color-cut: orange;
+    --highlight-color-keep: cyan;
 }
 
 .highlight:hover {
-    background-color: darkorange;
+    --highlight-color-cut: darkorange;
+    --highlight-color-keep: darkcyan;
 }
 
 #highlight-ui {

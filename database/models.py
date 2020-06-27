@@ -31,23 +31,26 @@ class Highlight(Base):
     paragraph = Column(String(5), nullable=False)
     start = Column(Integer, nullable=False)
     length = Column(Integer, nullable=False)
+    type = Column(String(5), nullable=False)
 
     @staticmethod
-    def from_json(draft_id, json):
-        return Highlight(draft_id=draft_id,
+    def from_json(draft, json):
+        return Highlight(draft_id=draft.id,
                          paragraph=json['p'],
                          start=json['start'],
-                         length=json['length'])
+                         length=json['length'],
+                         type=json['type'])
 
     def to_dict(self):
         return dict(
             id=self.id,
             p=self.paragraph,
             start=self.start,
-            length=self.length
+            length=self.length,
+            type=self.type
         )
 
-   
+
 class URL(Base):
     __tablename__ = 'urls'
 

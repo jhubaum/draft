@@ -9,7 +9,8 @@
   </head>
   <body>
     <context-ui id="selection-ui">
-      <button onclick="createHighlight('cut');">Highlight</button>
+      <button class="highlight-button" data-highlight-type="cut"></button>
+      <button class="highlight-button" data-highlight-type="keep"></button>
     </context-ui>
     <div id="highlight-ui" hidden>
       <button>Delete Highlight</button>
@@ -22,6 +23,11 @@
     <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
     <script>
       Highlight.fromJSON({{ highlights | tojson }})
+
+      document.querySelectorAll('.highlight-button').forEach(b => {
+          let type = b.innerHTML = b.getAttribute('data-highlight-type');
+          b.addEventListener('click', () => createHighlight(type));
+      });
     </script>
   </body>
 </html>

@@ -20,7 +20,7 @@ def setup():
 
 @app.route('/')
 def home():
-    return render_template('files/example.html')
+    return render_template('files/example.html', highlights=[], title="Example")
 
 @app.route('/<url>')
 def resolve_url(url):
@@ -37,24 +37,30 @@ def resolve_url(url):
                            highlights=json.dumps(highlights))
 
 
-@app.route('/<int:draft_id>/highlight/add', methods=['POST'])
-def add_highlight(draft_id):
-    print('\t add highlight')
+@app.route('/<url>/highlight/add', methods=['POST'])
+def add_highlight(url):
     session = Session()
-    new = Highlight.from_json(draft_id, request.json)
+    q = session.query(URL).filter(URL.url == url)
+    if q.count() == 0:
+        return "invalid URL"
+    new = Highlight.from_json(q.first().draft, request.json)
     session.add(new)
     session.commit()
 
     return jsonify(dict(id=new.id))
 
 
-@app.route('/<int:draft_id>/highlight/delete', methods=['POST'])
-def remove_highlight(draft_id):
-    print('\t remove highlight')
+@app.route('/<url>/highlight/delete', methods=['POST'])
+def remove_highlight(url):
     session = Session()
+    q = session.query(URL).filter(URL.url == url)
+    if q.count() == 0:
+        return "invalid URL"
+    url = q.first()
+
     highlight = session.query(Highlight).get(request.json['id'])
 
-    if highlight is not None and highlight.draft_id == draft_id:
+    if highlight is not None and highlight.draft == url.draft:
         session.delete(highlight)
         session.commit()
 

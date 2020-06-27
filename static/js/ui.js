@@ -1,23 +1,13 @@
 const LINE_HEIGHT = parseInt(getComputedStyle(document.querySelector("#main"))['line-height'].replace('px', ''))
 
 class Highlight {
-    constructor(text, start, length, id=null) {
-        this.span = document.createElement('span');
-        this.span.classList.add('highlight', 'noselect');
-        this.span.innerText = text.data.substr(start, length);
-
-        this.span.addEventListener('click', e => {
-            this.show_ui();
-        })
-
-        let end = text.data.substr(start+length, text.data.length);
-        text.data = text.data.substr(0, start);
-        text.parentNode.insertBefore(this.span, text.nextSibling);
-        this.span.insertAdjacentText('afterend', end);
+    constructor(text, start, length, type, id=null) {
+        this.id = null;
+        this.span = null;
 
         if (id == null) {
             // send it to db
-            fetch('/1/highlight/add', {
+            fetch(window.location.href + '/highlight/add', {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -27,10 +17,31 @@ class Highlight {
                     p: text.parentNode.getAttribute('id'),
                     start: start,
                     length: length,
+                    type: type
                 })
-            }).then(response => this.id = response.json().id)
+            }).then(response => response.json()).then(json => {
+                this._initialize(text, start, length, type, json.id);
+            });
         } else
-            this.id = id;
+            this._initialize(text, start, length, type, id);
+    }
+
+    _initialize(text, start, length, type, id) {
+        this.id = id;
+
+        this.span = document.createElement('span');
+        this.span.classList.add('highlight', 'noselect');
+        this.span.innerText = text.data.substr(start, length);
+        this.span.style.backgroundColor = `var(--highlight-color-${type})`;
+
+        this.span.addEventListener('click', e => {
+            this.show_ui();
+        })
+
+        let end = text.data.substr(start+length, text.data.length);
+        text.data = text.data.substr(0, start);
+        text.parentNode.insertBefore(this.span, text.nextSibling);
+        this.span.insertAdjacentText('afterend', end);
     }
 
     show_ui() {
@@ -47,12 +58,7 @@ class Highlight {
     }
 
     remove_highlight() {
-        if (this.id == null) {
-            alert('Sync Error with Server. Please try to reload the page')
-            return;
-        }
-
-        fetch('/1/highlight/delete', {
+        fetch(window.location.href + '/highlight/delete', {
             method: "POST",
              headers: {
                  'Accept': 'application/json',
@@ -78,7 +84,7 @@ class Highlight {
         this.span.parentNode.removeChild(this.span);
     }
 
-    static fromSelection(sel) {
+    static fromSelection(sel, type) {
         let highlights = [];
 
         for (let i=0; i<sel.rangeCount; ++i) {
@@ -90,12 +96,12 @@ class Highlight {
                 start = start.childNodes[0];
 
             if (start == end)
-                highlights.push(new Highlight(start, r.startOffset, r.endOffset-r.startOffset));
+                highlights.push(new Highlight(start, r.startOffset, r.endOffset-r.startOffset, type));
             else {
-                highlights.push(new Highlight(start, r.startOffset, start.data.length-r.startOffset));
+                highlights.push(new Highlight(start, r.startOffset, start.data.length-r.startOffset, type));
 
                 if (end.nodeType == 3)
-                    highlights.push(new Highlight(end, 0, r.endOffset));
+                    highlights.push(new Highlight(end, 0, r.endOffset, type));
             }
         }
         return highlights;
@@ -112,7 +118,7 @@ class Highlight {
                 else if (nodes[i].data.length < start+h.length)
                     start -= nodes[i].data.length
                 else {
-                    new Highlight(nodes[i], start, h.length, h.id);
+                    new Highlight(nodes[i], start, h.length, h.type, h.id);
                     break;
                 }
             }
@@ -160,26 +166,7 @@ function createHighlight(type) {
     if (sel.isCollapsed)
         return;
 
-    let highlights = Highlight.fromSelection(sel);
-
-
-    // add menu
-    //createHighlightMenu(sel.getRangeAt(0).getClientRects()[0].y);
-    //
-
+    let highlights = Highlight.fromSelection(sel, type);
     document.querySelector("#selection-ui").hide();
     sel.empty();
-}
-
-function createHighlightMenu(highlightY) {
-    let root = document.createElement('div');
-    root.classList.add('noselect', 'context-ui');
-
-    root.innerHTML = `<button>Delete</button>`;
-
-    root.style.top = `${highlightY + window.pageYOffset}px`;
-    root.style.left = `80vw`;
-
-    document.body.append(root);
-    return root;
 }
