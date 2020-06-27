@@ -6,7 +6,7 @@ html {
 article {
     width: 60vw;
     margin: auto;
-    font-size: 21px;
+    font-size: 16px;
 }
 
 .context-ui {
@@ -20,11 +20,18 @@ article {
 .highlight {
     --highlight-color-cut: orange;
     --highlight-color-keep: cyan;
+    --highlight-color-confusing: blue;
+    --highlight-color-drift: lime;
+    --highlight-color-typo: red;
 }
 
 .highlight:hover {
     --highlight-color-cut: darkorange;
     --highlight-color-keep: darkcyan;
+    --highlight-color-confusing: darkblue;
+    --highlight-color-drift: darkgreen;
+    --highlight-color-typo: darkred;
+   
 }
 
 #highlight-ui {
@@ -37,6 +44,48 @@ article {
     left: 15vw;
     top: 25vh;
     padding: 10px;
+}
+
+#welcome {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0vw;
+    top: 0vh;
+    background-color: #ffffffdd;
+    vertical-align: middle;
+}
+
+#welcome div {
+    position: fixed;
+    width: 50vw;
+    /*height: 70vh;*/
+    min-height: 10vh;
+    top: 10vh;
+    left: 25vw;
+    border: 1px solid  #dddddd;
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 0.05s linear;
+}
+
+#menu-bar {
+    position: fixed;
+    background-color: yellow;
+    width: 70vw;
+    left: 15vw;
+    height: 30px;
+    bottom: 0px;
+    border: 1px solid black;
+    border-bottom: None;
+    border-radius: 5px 5px 0px 0px;
+    padding: 5px;
 }
 
 .noselect {

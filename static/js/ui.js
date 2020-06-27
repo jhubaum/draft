@@ -7,7 +7,7 @@ class Highlight {
 
         if (id == null) {
             // send it to db
-            fetch(window.location.href + '/highlight/add', {
+            fetch(URL_PREFIX + '/highlight/add', {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -58,7 +58,7 @@ class Highlight {
     }
 
     remove_highlight() {
-        fetch(window.location.href + '/highlight/delete', {
+        fetch(URL_PREFIX + '/highlight/delete', {
             method: "POST",
              headers: {
                  'Accept': 'application/json',

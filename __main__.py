@@ -29,12 +29,14 @@ def resolve_url(url):
     if q.count() == 0:
         return "Invalid URL, maybe I've deleted the post already. Thanks for your help anyways"
 
-    draft = q.first().draft
-    highlights = list(map(lambda x: x.to_dict(), draft.highlights))
+    url = q.first()
+    highlights = list(map(lambda x: x.to_dict(), url.draft.highlights))
 
-    return render_template(f'files/{draft.filename}',
-                           title=draft.title,
-                           highlights=json.dumps(highlights))
+    return render_template(f'files/{url.draft.filename}',
+                           title=url.draft.title,
+                           highlights=json.dumps(highlights),
+                           url=url,
+                           show_welcome=True)
 
 
 @app.route('/<url>/highlight/add', methods=['POST'])

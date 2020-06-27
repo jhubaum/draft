@@ -11,11 +11,49 @@
     <context-ui id="selection-ui">
       <button class="highlight-button" data-highlight-type="cut"></button>
       <button class="highlight-button" data-highlight-type="keep"></button>
+      <button class="highlight-button" data-highlight-type="confusing"></button>
+      <button class="highlight-button" data-highlight-type="typo"></button>
+      <button class="highlight-button" data-highlight-type="drift"></button>
     </context-ui>
     <div id="highlight-ui" hidden>
       <button>Delete Highlight</button>
       <button onclick="this.parentNode.hidden=true;">Hide Overlay</button>
     </div>
+    <div id="menu-bar" class="noselect">
+      This is how much you would cut:
+      This is himw much you would keep:
+      <button>Show info</button>
+      <button>Mark as finished</button>
+    </div>
+    {% if show_welcome %}
+    <div id="welcome" class="noselect">
+      <div>
+        Hey {{ url.name }},
+        <br><br>
+        thank you for reading the draft of this post.
+        While you read it, reading, it would help, if you mark the following text passages (just select them and click the appropriate button)
+        <br>
+        Please mark passages, that are
+        <ul>
+          <li>confusing</li>
+          <li>where you start to drift or lose focus</li>
+        </ul>
+        Also, if you find any typos, please mark them as well.
+
+        And if you decide to do only one thing, please do the following:
+        If you had to cut the text by ten percent, which 10% would you cut. Which 10% would you keep?
+
+        Thank you very much for taking the time to answer these questions. You are helping a lot
+
+        <br>
+        <a href="#"
+           onclick="document.querySelector('#welcome').classList.add('hidden')"
+           style="float:right;margin: 0px 20px">
+          Continue to text
+        </a>
+      </div>
+    </div>
+    {% endif %}
     <article id="main">
       {% block content %}
       {% endblock %}
@@ -23,6 +61,8 @@
     <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
     <script>
       Highlight.fromJSON({{ highlights | tojson }})
+
+      const URL_PREFIX = '{{ url.url }}';
 
       document.querySelectorAll('.highlight-button').forEach(b => {
           let type = b.innerHTML = b.getAttribute('data-highlight-type');
