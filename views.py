@@ -32,7 +32,7 @@ def resolve_url(url):
     url = q.first()
     highlights = list(map(lambda x: x.to_dict(), url.draft.highlights))
 
-    return render_template(f'files/{url.draft.filename}',
+    return render_template('files/{}'.format(url.draft.filename),
                            title=url.draft.title,
                            highlights=json.dumps(highlights),
                            url=url,

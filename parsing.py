@@ -24,6 +24,9 @@ def create_draft_file(text):
         p_count = 0
         paragraph = []
 
+        def write_p():
+            f.write('<p id="p{}">{}</p>\n'.format(p_count, paragraph))
+
         f.write('{% extends "file.html" %}\n')
         f.write('{% block content %}\n')
         for l in lines[1:]:
@@ -34,13 +37,13 @@ def create_draft_file(text):
             if not l:
                 # finish paragraph
                 paragraph = '<br>'.join(paragraph)
-                f.write(f'<p id="p{p_count}">{paragraph}</p>\n')
+                write_p()
                 p_count += 1
                 paragraph = []
             else:
                 paragraph.append(l)
 
-        f.write(f'<p id="p{p_count}">{paragraph}</p>\n')
+        write_p()
         f.write('{% endblock %}\0')
 
     return filename, title
