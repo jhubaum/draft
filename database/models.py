@@ -17,10 +17,7 @@ class Draft(Base):
     urls = relationship("URL", back_populates="draft",
                         cascade="all, delete, delete-orphan")
 
-    def __repr__(self):
-        return f'<Draft({self.title})>'
 
-   
 class Highlight(Base):
     __tablename__ = 'highlights'
 
