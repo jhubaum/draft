@@ -9,7 +9,7 @@ from .database.models import Draft, Highlight, URL
 
 from . import parsing
 
-app = Flask(__name__)
+from . import app
 
 def setup():
     session = Session()
