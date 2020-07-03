@@ -34,27 +34,15 @@ class Highlight {
         this.span.innerText = text.data.substr(start, length);
         this.span.style.backgroundColor = `var(--highlight-color-${type})`;
 
+        let ui = document.querySelector('#highlight-ui');
         this.span.addEventListener('click', e => {
-            this.show_ui();
+            ui.show(this.span, this);
         })
 
         let end = text.data.substr(start+length, text.data.length);
         text.data = text.data.substr(0, start);
         text.parentNode.insertBefore(this.span, text.nextSibling);
         this.span.insertAdjacentText('afterend', end);
-    }
-
-    show_ui() {
-        let ui = document.querySelector("#highlight-ui");
-        // set context for ui
-        let buttons = ui.getElementsByTagName('button')
-
-        // delete button
-        buttons[0].onclick = () => {
-            ui.hidden = true;
-            this.remove_highlight();
-        }
-        ui.hidden = false;
     }
 
     remove_highlight() {
@@ -130,13 +118,35 @@ class ContextUIElement extends HTMLDivElement {
     connectedCallback() {
         this.classList.add('noselect', 'context-ui');
         this.hidden = true;
+
+        this._setContext(null);
+        this.childNodes.forEach(c => {
+            c.addEventListener('click', this.hide.bind(this));
+        });
     }
 
-    show(range) {
-        this.hidden = false;
+    show(rect, context=null) {
+        if (rect.constructor.name !== 'DOMRect') {
+            let crs = rect.getClientRects();
+            rect = crs[crs.length-1];
+        }
 
-        this.style.left = `${range.x+window.pageXOffset}px`;
-        this.style.top = `${range.y+window.pageYOffset+LINE_HEIGHT}px`;
+        this.hidden = false;
+        
+        let left = rect.x + window.pageXOffset + rect.width - this.offsetWidth;
+        left = Math.max(left, document.querySelector('#main').offsetLeft);
+        
+        this.style.left = `${left}px`;
+        this.style.top = `${rect.y+window.pageYOffset+LINE_HEIGHT}px`;
+
+        this._setContext(context);
+    }
+
+    _setContext(context) {
+        this.context = context;
+        this.childNodes.forEach(c => {
+            c.context = context;
+        });
     }
 
     hide() {
@@ -146,12 +156,14 @@ class ContextUIElement extends HTMLDivElement {
 customElements.define('context-ui', ContextUIElement, {extends: 'div'})
 
 document.addEventListener('mouseup', e => {
+    document.querySelectorAll("context-ui").forEach(c => {
+        c.hide();
+    });
+
     let sel = document.getSelection();
     
-    if(sel.isCollapsed) {
-        document.querySelector("#selection-ui").hide();
+    if (sel.isCollapsed)
         return;
-    }
 
     let r = sel.getRangeAt(sel.rangeCount-1);
     r = r.getClientRects();

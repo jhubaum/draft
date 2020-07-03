@@ -15,45 +15,47 @@
       <button class="highlight-button" data-highlight-type="typo"></button>
       <button class="highlight-button" data-highlight-type="drift"></button>
     </context-ui>
-    <div id="highlight-ui" hidden>
-      <button>Delete Highlight</button>
-      <button onclick="this.parentNode.hidden=true;">Hide Overlay</button>
-    </div>
+    <context-ui id="highlight-ui" hidden>
+      <button onclick="this.context.remove_highlight();">Delete</button>
+    </context-ui>
     <div id="menu-bar" class="noselect">
-      This is how much you would cut:
-      This is himw much you would keep:
-      <button>Show info</button>
-      <button>Mark as finished</button>
+      Mark as
+<button class="highlight-button" data-highlight-type="cut"></button>
+      <button class="highlight-button" data-highlight-type="keep"></button>
+      <button class="highlight-button" data-highlight-type="confusing"></button>
+      <button class="highlight-button" data-highlight-type="typo"></button>
+      <button class="highlight-button" data-highlight-type="drift"></button>
+      <button style="float: right" onclick="showOverlay();">
+        Back to info
+      </button>
     </div>
-    {% if show_welcome %}
-    <div id="welcome" class="noselect">
+    <div id="overlay" class="noselect">
       <div>
-        Hey {{ url.name }},
-        <br><br>
-        thank you for reading the draft of this post.
-        While you read it, reading, it would help, if you mark the following text passages (just select them and click the appropriate button)
-        <br>
-        Please mark passages, that are
+        <p class="welcome-text">
+          Hey {{ url.name }},
+          <br>
+          thank you for reading the draft of this post.
+          While you read it, keep the following questions in mind.
+          When a passage strikes your attention, highlight it and press the appropriate button.
+        </p>
         <ul>
-          <li>confusing</li>
-          <li>where you start to drift or lose focus</li>
+          <li>If you had to prune the text, which 10% would you [cut]?
+            <br>(if you only look for one thing, look for this)</li>
+          <li>Which 10% would you [keep], no matter what?</li>
+          <li>What paragraphs do you find [confusing]?</li>
+          <li>Did you find a [typo]?</li>
+          <li>Where do you loose [focus] while reading?</li>
         </ul>
-        Also, if you find any typos, please mark them as well.
-
-        And if you decide to do only one thing, please do the following:
-        If you had to cut the text by ten percent, which 10% would you cut. Which 10% would you keep?
-
-        Thank you very much for taking the time to answer these questions. You are helping a lot
-
-        <br>
+        <p class="welcome-text">
+          Thank you very much for helping me with your feedback!
+        </p>
         <a href="#"
-           onclick="document.querySelector('#welcome').classList.add('hidden')"
-           style="float:right;margin: 0px 20px">
-          Continue to text
+           onclick="overlayOnClick(this);"
+           style="float:right;">
+          Continue to draft
         </a>
       </div>
     </div>
-    {% endif %}
     <article id="main">
       {% block content %}
       {% endblock %}
@@ -68,6 +70,26 @@
           let type = b.innerHTML = b.getAttribute('data-highlight-type');
           b.addEventListener('click', () => createHighlight(type));
       });
+
+      function overlayOnClick(link) {
+          let overlay = document.querySelector('#overlay');
+
+          /*
+          document.querySelectorAll('.welcome-text').forEach(e => {
+              e.hidden = true;
+          });
+          */
+          
+          (link.onclick = () => {
+              overlay.classList.add('hidden');
+          })();
+
+          link.innerText = "Back to draft";
+      }
+
+      function showOverlay() {
+        document.querySelector('#overlay').classList.remove('hidden');
+      }
     </script>
   </body>
 </html>

@@ -35,8 +35,7 @@ def resolve_url(url):
     return render_template('files/{}'.format(url.draft.filename),
                            title=url.draft.title,
                            highlights=json.dumps(highlights),
-                           url=url,
-                           show_welcome=True)
+                           url=url)
 
 
 @app.route('/<url>/highlight/add', methods=['POST'])
