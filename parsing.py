@@ -1,7 +1,7 @@
 import re
 import os
 
-FILE_SUBDIR = 'templates/files/'
+FILE_SUBDIR = 'draft/templates/files/'
 
 # if line starts with one of these characters, ignore the line
 IGNORE_CHARS = '#*'
