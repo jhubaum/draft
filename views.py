@@ -108,7 +108,7 @@ def add_url():
     session.add(url)
     session.commit()
 
-    return 'ok'
+    return jsonify(dict(url=url.url, name=url.name))
 
 @app.route('/config/url/delete/<url>', methods=['POST'])
 def delete_url(url):

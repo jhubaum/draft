@@ -12,14 +12,14 @@
     <details id="draft_{{d.id}}">
       <summary>{{d.title}}</summary>
       <button onclick="deleteDraft({{ d.id }});">Delete Draft</button>
-      <br>
+      <div id="url-container-{{d.id}}">
       {% for u in d.urls %}
       <p>
         <a href="/{{u.url}}">{{u.name}}</a>
         <button onclick="deleteURL('{{u.url}}', this.parentNode);">X</button>
       <p>
       {% endfor %}
-      <br>
+      </div>
       <p> <input type="text" id="url-name-{{d.id}}">
         <button onclick="addURL({{d.id}});">Add url</button></p>
     </details>
@@ -33,12 +33,12 @@
 
     <script>
       function deleteDraft(id) {
-          let node = document.querySelector(`#draft_${id}`);
-          node.parentNode.removeChild(node);
-
           fetch(`/config/draft/delete/${id}`, {
               method: "POST"
-          });
+          }).then(() => {
+              let node = document.querySelector(`#draft_${id}`);
+              node.parentNode.removeChild(node);
+          })
       }
 
       function addURL(draftId) {
@@ -53,6 +53,16 @@
                   name: name.value,
                   draft_id: draftId
               })
+          }).then(response => response.json())
+            .then(u => {
+              let parent = document.querySelector(`#url-container-${draftId}`);
+              let elem = document.createElement('p');
+              parent.appendChild(elem);
+
+              elem.innerHTML = `
+        <a href="/${u.url}">${u.name}</a>
+        <button onclick="deleteURL('${u.url}', this.parentNode);">X</button>
+`;
           });
           name.value = "";
       }

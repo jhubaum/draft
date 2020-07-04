@@ -68,21 +68,21 @@ class Highlight {
             body: JSON.stringify({
                 id: this.id
             })
-        })
-
-        if (this.span.previousSibling != null &&
-           this.span.previousSibling.nodeType === 3)
+        }).then(() => {
+            if (this.span.previousSibling != null &&
+                this.span.previousSibling.nodeType === 3)
                 this.span.previousSibling.data += this.span.innerText;
-        else
-            this.span.insertAdjacentText('beforebegin', this.span.innerText);
+            else
+                this.span.insertAdjacentText('beforebegin', this.span.innerText);
 
-        if (this.span.nextSibling != null &&
-            this.span.nextSibling.nodeType === 3) {
-            this.span.previousSibling.data += this.span.nextSibling.data;
-            this.span.parentNode.removeChild(this.span.nextSibling);
-        }
+            if (this.span.nextSibling != null &&
+                this.span.nextSibling.nodeType === 3) {
+                this.span.previousSibling.data += this.span.nextSibling.data;
+                this.span.parentNode.removeChild(this.span.nextSibling);
+            }
 
-        this.span.parentNode.removeChild(this.span);
+            this.span.parentNode.removeChild(this.span);
+        });
     }
 
     static fromSelection(sel, type) {
