@@ -2,14 +2,28 @@ import json
 import random
 import string
 
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import render_template, request, jsonify, redirect, url_for
+from flask import session as f_s
+
+from functools import wraps
 
 from .database import Session
 from .database.models import Draft, Highlight, URL
 
 from . import parsing
-
 from . import app
+from . import config
+
+
+def login_required(f):
+    @wraps(f)
+    def check_login(*args, **kwargs):
+        if 'logged_in' in f_s and f_s['logged_in']:
+            return f(*args, **kwargs)
+        return redirect(url_for('login'))
+
+    return check_login
+
 
 def setup():
     session = Session()
@@ -20,7 +34,7 @@ def setup():
 
 @app.route('/')
 def home():
-    return render_template('files/example.html', highlights=[], title="Example")
+    return redirect(url_for('admin_view'))
 
 @app.route('/<url>')
 def resolve_url(url):
@@ -68,11 +82,13 @@ def remove_highlight(url):
     return 'ok'
 
 @app.route('/config')
+@login_required
 def admin_view():
     session = Session()
     return render_template('config.html', drafts=session.query(Draft).all())
 
 @app.route('/config/draft/add', methods=['POST'])
+@login_required
 def add_draft():
     filename, title = parsing.create_draft_file(request.form['content'])
 
@@ -83,6 +99,7 @@ def add_draft():
     return redirect(url_for('admin_view'))
 
 @app.route('/config/draft/delete/<int:draft_id>', methods=['POST'])
+@login_required
 def delete_draft(draft_id):
     session = Session()
     draft = session.query(Draft).get(draft_id)
@@ -93,6 +110,7 @@ def delete_draft(draft_id):
     return 'ok'
 
 @app.route('/config/url/add', methods=['POST'])
+@login_required
 def add_url():
     def gen(length=8):
         return ''.join(random.sample(string.ascii_lowercase, length))
@@ -111,9 +129,21 @@ def add_url():
     return jsonify(dict(url=url.url, name=url.name))
 
 @app.route('/config/url/delete/<url>', methods=['POST'])
+@login_required
 def delete_url(url):
     session = Session()
     session.query(URL).filter(URL.url == url).delete()
     session.commit()
 
     return 'ok'
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        print(request.form['password'])
+        if request.form['password'] == config.PASSWORD:
+            f_s['logged_in'] = True
+            return redirect(url_for('admin_view'))
+        return render_template('login.html', login_failed=True)
+
+    return render_template('login.html', login_failed=False)
