@@ -11,9 +11,6 @@ class Draft(Base):
     title = Column(String, nullable=False)
     filename = Column(String, nullable=False)
 
-    highlights = relationship("Highlight", back_populates="draft",
-                              cascade="all, delete, delete-orphan")
-
     urls = relationship("URL", back_populates="draft",
                         cascade="all, delete, delete-orphan")
 
@@ -22,8 +19,8 @@ class Highlight(Base):
     __tablename__ = 'highlights'
 
     id = Column(Integer, primary_key=True)
-    draft_id = Column(Integer, ForeignKey('drafts.id'))
-    draft = relationship("Draft", back_populates="highlights")
+    url_id = Column(Integer, ForeignKey('urls.id'))
+    url = relationship("URL", back_populates="highlights")
 
     paragraph = Column(String(5), nullable=False)
     start = Column(Integer, nullable=False)
@@ -31,8 +28,8 @@ class Highlight(Base):
     type = Column(String(5), nullable=False)
 
     @staticmethod
-    def from_json(draft, json):
-        return Highlight(draft_id=draft.id,
+    def from_json(url, json):
+        return Highlight(url_id=url.id,
                          paragraph=json['p'],
                          start=json['start'],
                          length=json['length'],
@@ -57,3 +54,6 @@ class URL(Base):
 
     draft_id = Column(Integer, ForeignKey('drafts.id'))
     draft = relationship("Draft", back_populates="urls")
+
+    highlights = relationship("Highlight", back_populates="url",
+                              cascade="all, delete, delete-orphan")

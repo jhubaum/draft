@@ -30,7 +30,7 @@ def resolve_url(url):
         return "Invalid URL, maybe I've deleted the post already. Thanks for your help anyways"
 
     url = q.first()
-    highlights = list(map(lambda x: x.to_dict(), url.draft.highlights))
+    highlights = list(map(lambda x: x.to_dict(), url.highlights))
 
     return render_template('files/{}'.format(url.draft.filename),
                            title=url.draft.title,
@@ -44,7 +44,7 @@ def add_highlight(url):
     q = session.query(URL).filter(URL.url == url)
     if q.count() == 0:
         return "invalid URL"
-    new = Highlight.from_json(q.first().draft, request.json)
+    new = Highlight.from_json(q.first(), request.json)
     session.add(new)
     session.commit()
 
@@ -61,7 +61,7 @@ def remove_highlight(url):
 
     highlight = session.query(Highlight).get(request.json['id'])
 
-    if highlight is not None and highlight.draft == url.draft:
+    if highlight is not None and highlight.url == url:
         session.delete(highlight)
         session.commit()
 
