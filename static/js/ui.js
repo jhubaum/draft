@@ -1,11 +1,24 @@
 const LINE_HEIGHT = parseInt(getComputedStyle(document.querySelector("#main"))['line-height'].replace('px', ''))
 
+
+function getOffsetLength(text) {
+    let offset = 0;
+    for (let i=0; i < text.parentNode.childNodes.length; ++i) {
+        let n = text.parentNode.childNodes[i];
+        if (n == text)
+            break;
+        offset += ((n.nodeType == 1) ? n.innerText : n.data).length;
+    }
+    return offset;
+}
+
 class Highlight {
     constructor(text, start, length, type, id=null) {
         this.id = null;
         this.span = null;
 
         if (id == null) {
+
             // send it to db
             fetch(URL_PREFIX + '/highlight/add', {
                 method: "POST",
@@ -15,7 +28,7 @@ class Highlight {
                 },
                 body: JSON.stringify({
                     p: text.parentNode.getAttribute('id'),
-                    start: start,
+                    start: start+getOffsetLength(text),
                     length: length,
                     type: type
                 })
