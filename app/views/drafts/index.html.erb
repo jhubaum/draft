@@ -1,0 +1,21 @@
+<h1>Drafts</h1>
+
+<div id="draft_container">
+  <% @drafts.each do |draft| %>
+    <%= render partial: 'draft', locals: { draft: draft } %>
+  <% end %>
+</div>
+
+<%= form_with scope: :draft, url: drafts_path do |form| %>
+  <p>
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </p>
+  <p>
+    <%= form.label :body %>
+    <%= form.text_area :body %>
+  </p>
+  <p>
+    <%= form.submit %>
+  </p>
+<% end %>

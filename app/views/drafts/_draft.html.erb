@@ -1,0 +1,9 @@
+<div id="draft_<%= draft.id %>">
+  <h2><%= draft.title %></h2>
+  <p><%= draft.body[0..100] %>...</p>
+
+  <%= button_to "Delete", draft_path(draft),
+      remote: true,
+      method: :delete,
+      data: { confirm: 'Are you sure?' } %>
+</div>

@@ -1,0 +1,3 @@
+document.querySelector('#draft_container').insertAdjacentHTML('beforeend',
+    "<%= escape_javascript(render partial: 'draft', locals: { draft: @draft }) %>"
+);
