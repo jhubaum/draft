@@ -2,7 +2,7 @@
 
 <div id="draft_container">
   <% @drafts.each do |draft| %>
-    <%= render partial: 'draft', locals: { draft: draft } %>
+    <%= render partial: 'draft', object: draft %>
   <% end %>
 </div>
 

@@ -1,6 +1,16 @@
 <div id="draft_<%= draft.id %>">
   <h2><%= draft.title %></h2>
-  <p><%= draft.body[0..100] %>...</p>
+  <% draft.urls.each do |url| %>
+    <%= link_to url.name, draft_url_path(draft, url) %> |
+  <% end %>
+
+  <%= form_with scope: :url, url: draft_urls_path(draft) do |form| %>
+    <p>
+      <%= form.label :name %>
+      <%= form.text_field :name %>
+    </p>
+    <p><%= form.submit %></p>
+  <% end %>
 
   <%= button_to "Delete", draft_path(draft),
       remote: true,
