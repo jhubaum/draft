@@ -1,10 +1,13 @@
 <div id="draft_<%= draft.id %>">
   <h2><%= draft.title %></h2>
-  <% draft.urls.each do |url| %>
-    <%= link_to url.name, draft_url_path(draft, url) %> |
-  <% end %>
+  <div class="urls">
+    <% draft.urls.each do |url| %>
+    <%= render url %>
+    <% end %>
+  </div>
 
-  <%= form_with scope: :url, url: draft_urls_path(draft) do |form| %>
+  <%= form_with model: Url.new do |form| %>
+    <%= form.hidden_field :draft_id, :value => draft.id %>
     <p>
       <%= form.label :name %>
       <%= form.text_field :name %>

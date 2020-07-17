@@ -1,0 +1,3 @@
+document.querySelector("#draft_<%= @draft.id %> .urls").insertAdjacentHTML('beforeend',
+"<%= escape_javascript(render partial: @url) %>"
+)

@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_12_182024) do
+ActiveRecord::Schema.define(version: 2020_07_17_190538) do
+
+  create_table "highlights", force: :cascade do |t|
+    t.string "container"
+    t.integer "index"
+    t.integer "length"
+    t.string "type"
+    t.integer "url_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["url_id"], name: "index_highlights_on_url_id"
+  end
 
   create_table "post_drafts", force: :cascade do |t|
     t.string "title"
@@ -28,5 +39,6 @@ ActiveRecord::Schema.define(version: 2020_07_12_182024) do
     t.index ["post_draft_id"], name: "index_urls_on_post_draft_id"
   end
 
+  add_foreign_key "highlights", "urls"
   add_foreign_key "urls", "post_drafts"
 end

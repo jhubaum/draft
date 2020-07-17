@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
-  resources :drafts do
-    resources :urls
+  resources :drafts
+
+  resources :urls do
+    resources :highlights
   end
 
   root 'drafts#index'

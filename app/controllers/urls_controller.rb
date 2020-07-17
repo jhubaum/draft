@@ -1,11 +1,12 @@
 class UrlsController < ApplicationController
   def show
-    @draft = PostDraft.find(params[:draft_id])
-    @url = @draft.urls.find(params[:id])
+    @url = Url.find(params[:id])
+    @draft = url.post_draft
   end
 
   def create
-    @draft = PostDraft.find(params[:draft_id])
+    @draft = PostDraft.find(params[:url][:draft_id])
+    params[:url] = params[:url].except(:draft_id)
     @url = @draft.urls.create(url_params) do |u|
       u.url = new_url_string
     end
@@ -29,6 +30,6 @@ class UrlsController < ApplicationController
     end
 
     def url_params
-      params.require(:url).permit(:draft_id, :name)
+      params.require(:url).permit(:name)
     end
 end
