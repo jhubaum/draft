@@ -18,6 +18,16 @@ class UrlsController < ApplicationController
     end
   end
 
+  def destroy
+    @url = Url.find(params[:id])
+
+    @url.destroy
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
   private
     def new_url_string
       url = SecureRandom.hex 4

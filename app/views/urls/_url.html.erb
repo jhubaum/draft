@@ -1,1 +1,7 @@
-<%= link_to url.name, url_path(url) %> |
+<span id="<%= url.dom_id %>">
+  <%= link_to url.name, url_path(url) %>
+  <%= link_to 'X', url_path(url),
+      remote: true,
+      method: :delete %>
+  |
+</span>
