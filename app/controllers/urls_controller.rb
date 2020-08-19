@@ -1,7 +1,7 @@
 class UrlsController < ApplicationController
   def show
     @url = Url.find(params[:id])
-    @draft = url.post_draft
+    @draft = @url.post_draft
   end
 
   def create
